@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using CRUD_Api.Model;
+using System.Collections.Generic;
 
 namespace CRUD_Api.Interfaces
 {
     public interface IDatabase
     {
-        List<string> Get();
+        List<ToolModel> Get();
         bool Remove();
         bool Replace(string existingTool, string newTool);
         bool Delete(string existingTool);
         bool Update(string existingTool, string newTool);
-        string GetTool(string tool);
+        ToolModel GetEntity(string tool);
+        ToolModel GetEntity(int id)
     }
 }
