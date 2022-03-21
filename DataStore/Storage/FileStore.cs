@@ -1,6 +1,9 @@
-﻿namespace CRUD_Api
+﻿using CRUD_Api.Interfaces;
+using CRUD_Api.Model;
+
+namespace CRUD_Api.DataStore
 {
-    public class FileStore
+    public class FileStore : IDatabase
     {
         private List<string> _tools;
         string databasePath = @".\database.txt";
@@ -48,6 +51,41 @@
         private void Save()
         {
             File.WriteAllLines(databasePath, _tools);
+        }
+
+        List<ToolModel> IDatabase.Get()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IDatabase.Remove()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IDatabase.Replace(string existingTool, string newTool)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IDatabase.Delete(string existingTool)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IDatabase.Update(string existingTool, string newTool)
+        {
+            throw new NotImplementedException();
+        }
+
+        ToolModel IDatabase.GetEntity(string tool)
+        {
+            throw new NotImplementedException();
+        }
+
+        ToolModel IDatabase.GetEntity(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
