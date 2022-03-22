@@ -1,34 +1,40 @@
 ﻿using CRUD_Api.Interfaces;
 using CRUD_Api.Model;
 using CRUD_Api.Helpers;
+using System.Text.Json;
+using System.Diagnostics;
 
 namespace CRUD_Api.DataStore
 {
     public class FileStore : IDatabase
     {
         private List<ToolModel> _purchaseInformation = new List<ToolModel>();
-        string databasePath = @".\database.txt";
+        string databasePath = @".\database.json";
         PopulateDataStoreWithBogusData faker;
-        string [] initialData = { "Hammer", "Screwdriver", "Mallet", "Axe", "Saw", "Scissors", "Chisel", "Pliers", "Drill", "Tape measure" };
-
+        
         public FileStore()
         {
             _purchaseInformation = new List<ToolModel>();
-            faker = new PopulateDataStoreWithBogusData(ref _purchaseInformation, 5);
+            faker = new PopulateDataStoreWithBogusData(ref _purchaseInformation, 3000000);
+            Save();
+            var startTime = DateTime.Now;
+            Debug.WriteLine("Began loading at: " + startTime.ToString());
 
-            if (!File.Exists(databasePath))
-            {
-                File.WriteAllLines(databasePath, initialData);
-            }
-            //_tools = File.ReadAllLines(databasePath).ToList<string>();
+            Load();
+            var differance = DateTime.Now - startTime;
+            Debug.WriteLine("Loading took: " + differance.ToString());
+
         }
         private void Save()
         {
-            throw new NotImplementedException();
+            var options = new JsonSerializerOptions { WriteIndented = false };
+            string serializedData = JsonSerializer.Serialize(_purchaseInformation, options);
+            File.WriteAllText(databasePath, serializedData);
         }
         private void Load()
         {
-            throw new NotImplementedException();
+            var jsonData = File.ReadAllText(databasePath);
+            _purchaseInformation = JsonSerializer.Deserialize<List<ToolModel>>(jsonData)!;
         }
 
         public List<ToolModel> Get()
