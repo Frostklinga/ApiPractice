@@ -4,9 +4,11 @@ namespace CRUD_Api.Storage
 {
     public class DataStore
     {
-        public DataStore(IDatabase db)
+        public DataStore(IDatabase datastoreImplementation)
         {
-
+            DataBase = datastoreImplementation;
         }
+        public IDatabase DataBase { get; private set; }
     }
 }
+

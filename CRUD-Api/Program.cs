@@ -1,3 +1,6 @@
+using CRUD_Api.DataStore;
+using CRUD_Api.Model;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,11 +20,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //Configure persistent storage
-var database = new CRUD_Api.FileStore();
+var database = new FileStore();
 
 app.MapDelete("/tools", (string tool) =>
 {
-    var succeeded = database.RemoveTool(tool);
+    var succeeded = database.Delete(tool);
     if (succeeded)
     {
         return Results.Ok(new { 
@@ -36,20 +39,20 @@ app.MapDelete("/tools", (string tool) =>
 
 app.MapGet("/tools", () =>
 {
-    return database.Tools();
+    return database.Get();
 })
 .WithName("GetTools");
 
-app.MapPost("/tools", (string tool) =>
+app.MapPost("/tools", (ToolModel toolPurchase) =>
 {
-    database.AddTool(tool);
-    return "Added: " + tool + " the repository of tools";
+    database.Add(toolPurchase);
+    return "Added: " + toolPurchase.ToString() + " the repository";
 })
 .WithName("AddTool"); //Inte rest standard. Döp till vad du vill.
 
 app.MapPut("/tools", (string existingTool, string newTool) =>
 {
-    var succeeded = database.ReplaceTool(existingTool, newTool);
+    var succeeded = database.Update(existingTool, newTool);
     if(succeeded)
     {
         return Results.Ok(new
@@ -60,6 +63,6 @@ app.MapPut("/tools", (string existingTool, string newTool) =>
     }
     return Results.NotFound();
 })
-.WithName("ReplaceTool");
+.WithName("UpdateTool");
 
 app.Run();

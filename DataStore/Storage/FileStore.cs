@@ -1,91 +1,93 @@
 ﻿using CRUD_Api.Interfaces;
 using CRUD_Api.Model;
+using CRUD_Api.Helpers;
 
 namespace CRUD_Api.DataStore
 {
     public class FileStore : IDatabase
     {
-        private List<string> _tools;
+        private List<ToolModel> _purchaseInformation = new List<ToolModel>();
         string databasePath = @".\database.txt";
-
+        PopulateDataStoreWithBogusData faker;
         string [] initialData = { "Hammer", "Screwdriver", "Mallet", "Axe", "Saw", "Scissors", "Chisel", "Pliers", "Drill", "Tape measure" };
+
         public FileStore()
         {
-            _tools = new List<string>();
+            _purchaseInformation = new List<ToolModel>();
+            faker = new PopulateDataStoreWithBogusData(ref _purchaseInformation, 5);
 
-            if(!File.Exists(databasePath))
+            if (!File.Exists(databasePath))
             {
                 File.WriteAllLines(databasePath, initialData);
             }
-            _tools = File.ReadAllLines(databasePath).ToList<string>();
-        }
-        public List<string> Tools()
-        {
-            return _tools;
-        }
-        public bool AddTool(string tool)
-        {
-            _tools.Add(tool);
-            Save();
-            return true;
-        }
-        public bool RemoveTool(string tool)
-        {
-            if (!_tools.Contains(tool))
-                return false;
-
-            _tools.Remove(tool);
-            Save();
-            return true;
-        }
-        public bool ReplaceTool(string existingTool, string newTool)
-        {
-            if (!_tools.Contains(existingTool))
-                return false;
-            _tools.Remove(existingTool);
-            _tools.Add(newTool);
-            
-            Save();
-            return true;
+            //_tools = File.ReadAllLines(databasePath).ToList<string>();
         }
         private void Save()
         {
-            File.WriteAllLines(databasePath, _tools);
+            throw new NotImplementedException();
         }
-
-        List<ToolModel> IDatabase.Get()
+        private void Load()
         {
             throw new NotImplementedException();
         }
 
-        bool IDatabase.Remove()
+        public List<ToolModel> Get()
         {
-            throw new NotImplementedException();
+            return _purchaseInformation;
         }
 
-        bool IDatabase.Replace(string existingTool, string newTool)
+        public bool Delete(string existingTool)
         {
-            throw new NotImplementedException();
+            var item = _purchaseInformation.SingleOrDefault<ToolModel>(x => x.Tool == existingTool);
+            if (item == null)
+                return false;
+
+            _purchaseInformation.Remove(item);
+            Save();
+            return true;
+        }
+        public bool Delete(int id)
+        {
+            var item = _purchaseInformation.Find(x => x.Id == id);
+            if (item == null)
+                return false;
+
+            _purchaseInformation.Remove(item);
+            Save();
+            return true;
         }
 
-        bool IDatabase.Delete(string existingTool)
+        public bool Update(string existingTool, string newTool)
         {
-            throw new NotImplementedException();
+            var storeIndex = _purchaseInformation.FindIndex(x => x.Tool == existingTool);
+            if (storeIndex == -1)
+                return false;
+
+            _purchaseInformation[storeIndex].Tool = newTool;
+            return true;
         }
 
-        bool IDatabase.Update(string existingTool, string newTool)
+        public ToolModel GetEntity(string tool)
         {
-            throw new NotImplementedException();
+            var item = _purchaseInformation.Find(x => x.Tool == tool);
+            if (item == null)
+                throw new KeyNotFoundException("The requested item " + tool + " was not found");
+
+            return item;
         }
 
-        ToolModel IDatabase.GetEntity(string tool)
+        public ToolModel GetEntity(int id)
         {
-            throw new NotImplementedException();
+            var item = _purchaseInformation.Find(x => x.Id == id);
+            if (item == null)
+                throw new KeyNotFoundException("The requested item of id " + id + " was not found");
+
+            return item;
         }
 
-        ToolModel IDatabase.GetEntity(int id)
+        public void Add(ToolModel newPurchase)
         {
-            throw new NotImplementedException();
+            _purchaseInformation.Add(newPurchase);
         }
     }
 }
