@@ -3,6 +3,8 @@ using CRUD_Api.Model;
 using CRUD_Api.Helpers;
 using System.Text.Json;
 using System.Diagnostics;
+using DataStore.DataStore;
+
 
 namespace CRUD_Api.DataStore
 {
@@ -14,16 +16,20 @@ namespace CRUD_Api.DataStore
         
         public FileStore()
         {
-            _purchaseInformation = new List<ToolModel>();
-            faker = new PopulateDataStoreWithBogusData(ref _purchaseInformation, 3000000);
-            Save();
-            var startTime = DateTime.Now;
-            Debug.WriteLine("Began loading at: " + startTime.ToString());
 
-            Load();
-            var differance = DateTime.Now - startTime;
-            Debug.WriteLine("Loading took: " + differance.ToString());
+            //Save();
+            //var startTime = DateTime.Now;
+            //Debug.WriteLine("Began loading at: " + startTime.ToString());
 
+            //Load();
+            //var differance = DateTime.Now - startTime;
+            //Debug.WriteLine("Loading took: " + differance.ToString());
+            //FileStoreSeparateFiles storage = new FileStoreSeparateFiles();
+            FileStoreChunks chunks;
+            int chunkSize = 100000;
+            int enteties = 10000000;
+            chunks = new FileStoreChunks(chunkSize, enteties);
+            
         }
         private void Save()
         {
